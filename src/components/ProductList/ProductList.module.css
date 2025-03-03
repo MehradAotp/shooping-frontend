@@ -1,0 +1,5 @@
+.productList h6,
+.productList p {
+  text-align: right;
+  padding-bottom: 4px;
+}

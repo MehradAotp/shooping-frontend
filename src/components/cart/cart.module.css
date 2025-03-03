@@ -1,0 +1,50 @@
+.cartTitle {
+  text-align: right;
+  margin: 20px 0 30px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+.cartContainer {
+  background-color: #eee;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.cartList {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.cartItem {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 0;
+}
+
+.itemText span {
+  text-align: right !important;
+  display: block;
+}
+.itemText p {
+  text-align: right !important;
+  display: block;
+}
+
+.cartItem .MuiIconButton-root {
+  margin-left: 0;
+  margin-right: auto;
+  padding: 8px;
+}
+
+.cartTotal {
+  text-align: right;
+  margin-top: 20px;
+  font-weight: 600;
+  padding: 12px 0;
+  border-top: 2px solid #eee;
+  direction: rtl;
+}
