@@ -10,9 +10,82 @@
   align-items: flex-end;
   width: 100%;
   direction: rtl;
+  background-color: #ffffff;
 }
 .home .button {
   margin-top: 20px;
   color: #fff;
   margin-right: auto;
+}
+
+.hero {
+  padding: 100px 0;
+  width: 100%;
+  background: linear-gradient(45deg, #4a90e2 0%, #2d2d2d 100%);
+  color: white;
+}
+
+.heroTitle {
+  font-weight: 700 !important;
+  margin-bottom: 20px !important;
+}
+
+.heroSubtitle {
+  margin-bottom: 30px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.ctaButton {
+  padding: 15px 40px !important;
+  font-size: 1.2rem !important;
+  border-radius: 30px !important;
+  background-color: #ff4757 !important;
+}
+
+.heroImage {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.features {
+  padding: 80px 0;
+  background-color: #f8f9fa;
+  width: 100%;
+}
+
+.sectionTitle {
+  text-align: center !important;
+  margin-bottom: 50px !important;
+  color: #2d2d2d !important;
+  font-weight: 700 !important;
+}
+
+.featureCard {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-10px);
+}
+
+.featureIcon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.featureTitle {
+  color: #2d2d2d;
+  margin-bottom: 15px;
+}
+
+.featureText {
+  color: #666;
+  line-height: 1.8;
 }

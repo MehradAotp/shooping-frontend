@@ -51,6 +51,82 @@ export interface CreateShopping {
 /**
  * 
  * @export
+ * @interface CreateUserInputDto
+ */
+export interface CreateUserInputDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateUserInputDto
+     */
+    'username': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateUserInputDto
+     */
+    'password': string;
+}
+/**
+ * 
+ * @export
+ * @interface CreateUserOutputDto
+ */
+export interface CreateUserOutputDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateUserOutputDto
+     */
+    'username': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateUserOutputDto
+     */
+    'id': string;
+}
+/**
+ * 
+ * @export
+ * @interface LoginInputDto
+ */
+export interface LoginInputDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginInputDto
+     */
+    'username': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginInputDto
+     */
+    'password': string;
+}
+/**
+ * 
+ * @export
+ * @interface LoginUserOutputDto
+ */
+export interface LoginUserOutputDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginUserOutputDto
+     */
+    'message': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginUserOutputDto
+     */
+    'access_token': string;
+}
+/**
+ * 
+ * @export
  * @interface ShoppingOutput
  */
 export interface ShoppingOutput {
@@ -106,6 +182,126 @@ export interface UpdateShopping {
 }
 
 /**
+ * AuthenticationApi - axios parameter creator
+ * @export
+ */
+export const AuthenticationApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {LoginInputDto} loginInputDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        login: async (loginInputDto: LoginInputDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'loginInputDto' is not null or undefined
+            assertParamExists('login', 'loginInputDto', loginInputDto)
+            const localVarPath = `/auth/login`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(loginInputDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * AuthenticationApi - functional programming interface
+ * @export
+ */
+export const AuthenticationApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = AuthenticationApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {LoginInputDto} loginInputDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async login(loginInputDto: LoginInputDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<LoginUserOutputDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.login(loginInputDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AuthenticationApi.login']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * AuthenticationApi - factory interface
+ * @export
+ */
+export const AuthenticationApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AuthenticationApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {AuthenticationApiLoginRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        login(requestParameters: AuthenticationApiLoginRequest, options?: RawAxiosRequestConfig): AxiosPromise<LoginUserOutputDto> {
+            return localVarFp.login(requestParameters.loginInputDto, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * Request parameters for login operation in AuthenticationApi.
+ * @export
+ * @interface AuthenticationApiLoginRequest
+ */
+export interface AuthenticationApiLoginRequest {
+    /**
+     * 
+     * @type {LoginInputDto}
+     * @memberof AuthenticationApiLogin
+     */
+    readonly loginInputDto: LoginInputDto
+}
+
+/**
+ * AuthenticationApi - object-oriented interface
+ * @export
+ * @class AuthenticationApi
+ * @extends {BaseAPI}
+ */
+export class AuthenticationApi extends BaseAPI {
+    /**
+     * 
+     * @param {AuthenticationApiLoginRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthenticationApi
+     */
+    public login(requestParameters: AuthenticationApiLoginRequest, options?: RawAxiosRequestConfig) {
+        return AuthenticationApiFp(this.configuration).login(requestParameters.loginInputDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
  * ShoppingApi - axios parameter creator
  * @export
  */
@@ -132,6 +328,10 @@ export const ShoppingApiAxiosParamCreator = function (configuration?: Configurat
             const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -165,6 +365,10 @@ export const ShoppingApiAxiosParamCreator = function (configuration?: Configurat
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -196,6 +400,10 @@ export const ShoppingApiAxiosParamCreator = function (configuration?: Configurat
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -229,6 +437,10 @@ export const ShoppingApiAxiosParamCreator = function (configuration?: Configurat
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -265,6 +477,10 @@ export const ShoppingApiAxiosParamCreator = function (configuration?: Configurat
             const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -529,6 +745,126 @@ export class ShoppingApi extends BaseAPI {
      */
     public update(requestParameters: ShoppingApiUpdateRequest, options?: RawAxiosRequestConfig) {
         return ShoppingApiFp(this.configuration).update(requestParameters.id, requestParameters.updateShopping, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * UsersApi - axios parameter creator
+ * @export
+ */
+export const UsersApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {CreateUserInputDto} createUserInputDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        register: async (createUserInputDto: CreateUserInputDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createUserInputDto' is not null or undefined
+            assertParamExists('register', 'createUserInputDto', createUserInputDto)
+            const localVarPath = `/users/register`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createUserInputDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * UsersApi - functional programming interface
+ * @export
+ */
+export const UsersApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = UsersApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {CreateUserInputDto} createUserInputDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async register(createUserInputDto: CreateUserInputDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateUserOutputDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.register(createUserInputDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.register']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * UsersApi - factory interface
+ * @export
+ */
+export const UsersApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = UsersApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {UsersApiRegisterRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        register(requestParameters: UsersApiRegisterRequest, options?: RawAxiosRequestConfig): AxiosPromise<CreateUserOutputDto> {
+            return localVarFp.register(requestParameters.createUserInputDto, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * Request parameters for register operation in UsersApi.
+ * @export
+ * @interface UsersApiRegisterRequest
+ */
+export interface UsersApiRegisterRequest {
+    /**
+     * 
+     * @type {CreateUserInputDto}
+     * @memberof UsersApiRegister
+     */
+    readonly createUserInputDto: CreateUserInputDto
+}
+
+/**
+ * UsersApi - object-oriented interface
+ * @export
+ * @class UsersApi
+ * @extends {BaseAPI}
+ */
+export class UsersApi extends BaseAPI {
+    /**
+     * 
+     * @param {UsersApiRegisterRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public register(requestParameters: UsersApiRegisterRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).register(requestParameters.createUserInputDto, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
