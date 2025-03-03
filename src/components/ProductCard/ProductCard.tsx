@@ -7,18 +7,17 @@ import {
   Button,
 } from "@mui/material";
 import styles from "./ProductCard.module.css";
+import { ShoppingOutput } from "../../api/todo";
 interface ProductCardProps {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
+  data: ShoppingOutput;
 }
 
-const ProductCard = ({ id, name, price, image }: ProductCardProps) => {
+const ProductCard = ({ data }: ProductCardProps) => {
+  const { _id, name, price, image } = data;
   const { addToCart } = useCart();
   const handleAddToCart = () => {
-    console.log("Adding to cart:", { id, name, price, image });
-    addToCart({ id, name, price, image });
+    console.log("Adding to cart:", { _id, name, price, image });
+    addToCart({ _id, name, price, image });
   };
   return (
     <Card sx={{ maxWidth: 300 }}>

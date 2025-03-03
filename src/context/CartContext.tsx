@@ -1,16 +1,10 @@
 import { createContext, useContext, useState } from "react";
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-}
+import { ShoppingOutput } from "../api/todo";
 
 interface CartContextType {
-  cart: Product[];
-  addToCart: (product: Product) => void;
-  removeFromCart: (id: number) => void;
+  cart: ShoppingOutput[];
+  addToCart: (product: ShoppingOutput) => void;
+  removeFromCart: (id: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -18,14 +12,14 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [cart, setCart] = useState<Product[]>([]);
+  const [cart, setCart] = useState<ShoppingOutput[]>([]);
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: ShoppingOutput) => {
     setCart((prev) => [...prev, product]);
   };
 
-  const removeFromCart = (id: number) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+  const removeFromCart = (id: string) => {
+    setCart((prev) => prev.filter((item) => item._id !== id));
   };
 
   return (

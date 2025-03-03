@@ -1,0 +1,78 @@
+.footer {
+  margin-top: 30px;
+  background-color: #2d2d2d;
+  color: #fff;
+  padding: 40px 20px;
+  width: 100%;
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footerTitle {
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #fff;
+  border-bottom: 2px solid #4a90e2;
+  padding-bottom: 8px;
+}
+
+.footerText {
+  color: #bdbdbd;
+  line-height: 1.8;
+}
+
+.footerLinks {
+  list-style: none;
+  padding: 0;
+}
+
+.footerLinks li {
+  margin-bottom: 10px;
+}
+
+.footerLinks a {
+  color: #bdbdbd;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footerLinks a:hover {
+  color: #4a90e2;
+}
+
+.socialIcons {
+  margin-top: 20px;
+}
+
+.socialIcons .MuiIconButton-root {
+  color: #bdbdbd;
+  transition: color 0.3s ease;
+}
+
+.socialIcons .MuiIconButton-root:hover {
+  color: #4a90e2;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.copyRight {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #404040;
+  color: #888;
+}
+
+@media (max-width: 768px) {
+  .footerContent {
+    flex-direction: column;
+    text-align: right;
+  }
+
+  .footerTitle {
+    font-size: 1.1rem;
+  }
+}
