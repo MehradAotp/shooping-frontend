@@ -17,13 +17,13 @@ const Cart = () => {
       </Typography>
       <List className={styles.cartList}>
         {cart.map((item) => (
-          <ListItem key={item.id} className={styles.cartItem}>
+          <ListItem key={item._id} className={styles.cartItem}>
             <ListItemText
               primary={item.name}
               secondary={`${item.price.toLocaleString()} تومان`}
               className={styles.itemText}
             />
-            <IconButton onClick={() => removeFromCart(item.id)}>
+            <IconButton onClick={() => removeFromCart(item._id)}>
               <Delete />
             </IconButton>
           </ListItem>
