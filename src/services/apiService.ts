@@ -75,42 +75,6 @@ export const getShopping = async (id: string): Promise<ShoppingOutput> => {
   return response.data;
 };
 
-export const createShopping = async (
-  name: string,
-  price: number,
-  image: string
-): Promise<ShoppingOutput> => {
-  const response = await shoppingApi.create({
-    createShopping: {
-      name,
-      price,
-      image,
-    },
-  });
-  return response.data;
-};
-
-export const updateShopping = async (
-  id: string,
-  name: string,
-  price: number,
-  image: string
-): Promise<ShoppingOutput> => {
-  const response = await shoppingApi.update({
-    id,
-    updateShopping: {
-      name,
-      price,
-      image,
-    },
-  });
-  return response.data;
-};
-
-export const deleteShopping = async (id: string): Promise<void> => {
-  await shoppingApi._delete({ id });
-};
-
 export const buyShopping = async (): Promise<BuyShoppingOutput> => {
   const response = await shoppingApi.buy();
   return response.data;

@@ -1,7 +1,7 @@
 import { TextField, Button, Typography, Link } from "@mui/material";
 import { useForm } from "react-hook-form";
 import styles from "./signup.module.css";
-import { signup } from "../../services/apiService";
+import { signup, login } from "../../services/apiService";
 import { enqueueSnackbar } from "notistack";
 import { AxiosError } from "axios";
 
@@ -17,7 +17,12 @@ const SignupForm = () => {
   const onSubmit = async (data: SignupForm) => {
     try {
       await signup(data.username, data.password);
-      enqueueSnackbar("ثبت نام با موفقیت انجام شد", {
+
+      const loginResponse = await login(data.username, data.password);
+
+      localStorage.setItem("token", loginResponse.access_token);
+
+      enqueueSnackbar("ثبت نام و ورود با موفقیت انجام شد", {
         variant: "success",
         autoHideDuration: 2000,
       });
