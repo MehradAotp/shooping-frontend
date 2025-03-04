@@ -3,10 +3,6 @@ import LoginForm from "../../components/login/login";
 import styles from "./loginPage.module.css";
 
 const LoginPage = () => {
-  const handleLogin = () => {
-    window.location.href = "/";
-  };
-
   return (
     <div className={styles.loginPage}>
       <Container maxWidth="lg">
@@ -17,7 +13,7 @@ const LoginPage = () => {
           style={{ minHeight: "100vh" }}
         >
           <Grid2 size={{ md: 6, xs: 12 }}>
-            <LoginForm onLogin={handleLogin} />
+            <LoginForm />
           </Grid2>
           <Grid2 size={{ md: 4, xs: 12 }} className={styles.illustration}>
             <img

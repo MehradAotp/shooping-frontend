@@ -1,27 +1,54 @@
-import { AppBar, Toolbar, Typography, Button, Container } from "@mui/material";
+import { useState, useEffect } from "react";
+import { AppBar, Toolbar, Typography, Button, Box, Badge } from "@mui/material";
 import { Link } from "react-router-dom";
-const Navbar = () => {
-  return (
-    <AppBar position="sticky">
-      <Toolbar sx={{ direction: "rtl" }}>
-        <Container
-          sx={{
-            mt: 4,
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            mb: 2,
-          }}
-        >
-          <Typography variant="h6" sx={{ flexGrow: 1, fontSize: "25px" }}>
-            فروشگاه مهراد
-          </Typography>
+import { useCart } from "../../context/CartContext";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
+const Navbar = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { cart } = useCart();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("cart");
+    setIsLoggedIn(false);
+    window.location.href = "/";
+  };
+
+  return (
+    <AppBar position="sticky" sx={{ bgcolor: "#1976d2", boxShadow: 3 }}>
+      <Toolbar
+        sx={{
+          direction: "rtl",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: "bold",
+            fontSize: "22px",
+            cursor: "pointer",
+            textDecoration: "none",
+          }}
+          component={Link}
+          to="/"
+          color="inherit"
+        >
+          فروشگاه مهراد
+        </Typography>
+        <Box>
           <Button
             color="inherit"
             component={Link}
             to="/"
-            sx={{ fontSize: "16px" }}
+            sx={{ fontSize: "16px", mx: 1 }}
           >
             صفحه اصلی
           </Button>
@@ -29,11 +56,40 @@ const Navbar = () => {
             color="inherit"
             component={Link}
             to="/cart"
-            sx={{ fontSize: "16px" }}
+            sx={{ fontSize: "16px", mx: 1 }}
           >
-            سبد خرید
+            <Badge
+              badgeContent={cart.reduce(
+                (acc: number, item) => acc + item.quantity,
+                0
+              )}
+              color="error"
+              sx={{ fontSize: "16px" }}
+            >
+              <ShoppingCartIcon sx={{ fontSize: "24px" }} />
+            </Badge>
           </Button>
-        </Container>
+          {isLoggedIn ? (
+            <Button
+              color="error"
+              onClick={logout}
+              variant="contained"
+              sx={{ fontSize: "16px", mx: 1, borderRadius: 1 }}
+            >
+              خروج
+            </Button>
+          ) : (
+            <Button
+              color="success"
+              component={Link}
+              variant="contained"
+              to="/login"
+              sx={{ fontSize: "16px", mx: 1, borderRadius: 1 }}
+            >
+              ورود
+            </Button>
+          )}
+        </Box>
       </Toolbar>
     </AppBar>
   );

@@ -26,6 +26,19 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
+ * @interface BuyShoppingOutput
+ */
+export interface BuyShoppingOutput {
+    /**
+     * 
+     * @type {string}
+     * @memberof BuyShoppingOutput
+     */
+    'message': string;
+}
+/**
+ * 
+ * @export
  * @interface CreateShopping
  */
 export interface CreateShopping {
@@ -346,6 +359,39 @@ export const ShoppingApiAxiosParamCreator = function (configuration?: Configurat
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        buy: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/shopping/buy`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {CreateShopping} createShopping 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -520,6 +566,17 @@ export const ShoppingApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async buy(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BuyShoppingOutput>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.buy(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ShoppingApi.buy']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {CreateShopping} createShopping 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -584,6 +641,14 @@ export const ShoppingApiFactory = function (configuration?: Configuration, baseP
          */
         _delete(requestParameters: ShoppingApiDeleteRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp._delete(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        buy(options?: RawAxiosRequestConfig): AxiosPromise<BuyShoppingOutput> {
+            return localVarFp.buy(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -702,6 +767,16 @@ export class ShoppingApi extends BaseAPI {
      */
     public _delete(requestParameters: ShoppingApiDeleteRequest, options?: RawAxiosRequestConfig) {
         return ShoppingApiFp(this.configuration)._delete(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ShoppingApi
+     */
+    public buy(options?: RawAxiosRequestConfig) {
+        return ShoppingApiFp(this.configuration).buy(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
