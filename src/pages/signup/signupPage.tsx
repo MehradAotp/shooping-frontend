@@ -3,10 +3,6 @@ import SignupForm from "../../components/signup/signup";
 import styles from "./signupPage.module.css";
 
 const SignupPage = () => {
-  const handleSignup = () => {
-    window.location.href = "/login";
-  };
-
   return (
     <div className={styles.signupPage}>
       <Container maxWidth="lg">
@@ -17,7 +13,7 @@ const SignupPage = () => {
           style={{ minHeight: "100vh" }}
         >
           <Grid2 size={{ md: 6, xs: 12 }}>
-            <SignupForm onSignup={handleSignup} />
+            <SignupForm />
           </Grid2>
           <Grid2 size={{ md: 4, xs: 12 }} className={styles.illustration}>
             <img

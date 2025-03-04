@@ -2,6 +2,8 @@ import { TextField, Button, Typography, Link } from "@mui/material";
 import { useForm } from "react-hook-form";
 import styles from "./signup.module.css";
 import { signup } from "../../services/apiService";
+import { enqueueSnackbar } from "notistack";
+import { AxiosError } from "axios";
 
 interface SignupForm {
   username: string;
@@ -9,15 +11,38 @@ interface SignupForm {
   confirmPassword: string;
 }
 
-const SignupForm = ({ onSignup }: { onSignup: () => void }) => {
+const SignupForm = () => {
   const { register, handleSubmit, formState, watch } = useForm<SignupForm>();
 
   const onSubmit = async (data: SignupForm) => {
     try {
       await signup(data.username, data.password);
-      onSignup();
-    } catch (error) {
-      console.error("Signup failed:", error);
+      enqueueSnackbar("ثبت نام با موفقیت انجام شد", {
+        variant: "success",
+        autoHideDuration: 2000,
+      });
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
+    } catch (error: unknown) {
+      let errorMessage = "خطا در ثبت نام! لطفاً مجدداً تلاش کنید";
+
+      if (error instanceof AxiosError) {
+        if (error.response?.data?.message) {
+          const serverError = error.response.data.message;
+          if (serverError.includes("Username already exists")) {
+            errorMessage = "نام کاربری قبلاً ثبت شده است";
+          }
+        }
+      } else if (error instanceof Error && error.message) {
+        console.log(error.message);
+        errorMessage = error.message;
+      }
+
+      enqueueSnackbar(errorMessage, {
+        variant: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
 
