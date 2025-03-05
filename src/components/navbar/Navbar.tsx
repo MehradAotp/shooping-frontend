@@ -15,7 +15,6 @@ const Navbar = () => {
 
   const logout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("cart");
     setIsLoggedIn(false);
     window.location.href = "/";
   };
@@ -59,10 +58,12 @@ const Navbar = () => {
             sx={{ fontSize: "16px", mx: 1 }}
           >
             <Badge
-              badgeContent={cart.reduce(
-                (acc: number, item) => acc + item.quantity,
-                0
-              )}
+              badgeContent={
+                cart?.items?.reduce(
+                  (acc: number, item) => acc + item.quantity,
+                  0
+                ) || 0
+              }
               color="error"
               sx={{ fontSize: "16px" }}
             >

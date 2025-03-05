@@ -20,20 +20,24 @@ interface ProductCardProps {
 const ProductCard = ({ data }: ProductCardProps) => {
   const { name, price, image } = data;
   const {
-    addToCart,
     cart,
+    addToCart,
     decrementQuantity,
     incrementQuantity,
     removeFromCart,
   } = useCart();
   const { enqueueSnackbar } = useSnackbar();
+  const handleAddToCart = async () => {
+    try {
+      await addToCart(data);
 
-  const handleAddToCart = () => {
-    addToCart(data);
-    enqueueSnackbar(`${data.name} به سبد خرید اضافه شد`, {
-      variant: "success",
-      autoHideDuration: 2000,
-    });
+      enqueueSnackbar(`${data.name} به سبد خرید اضافه شد`, {
+        variant: "success",
+        autoHideDuration: 2000,
+      });
+    } catch {
+      enqueueSnackbar("خطا در افزودن به سبد", { variant: "error" });
+    }
   };
   const handleRemoveFromCart = () => {
     removeFromCart(data._id);
@@ -43,8 +47,11 @@ const ProductCard = ({ data }: ProductCardProps) => {
     });
   };
 
-  const itemInCart = cart.find((item) => item._id === data._id);
-
+  const itemInCart = cart?.items?.find(
+    (item) => item.shoppingId?._id === data._id
+  );
+  console.log("this is cart", cart);
+  console.log("this is itemInCart", itemInCart);
   return (
     <Card sx={{ maxWidth: 300 }}>
       <CardMedia component="img" image={image} alt={name} />
@@ -53,9 +60,10 @@ const ProductCard = ({ data }: ProductCardProps) => {
         <Typography sx={{ mb: 3 }} variant="body1">
           {price.toLocaleString()} تومان
         </Typography>
+
         {itemInCart ? (
           <Box display="flex" alignItems="center" gap={1}>
-            {itemInCart.quantity > 1 ? (
+            {itemInCart?.quantity > 1 ? (
               <Button
                 variant="text"
                 color="error"
@@ -69,7 +77,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
                 <Delete />
               </IconButton>
             )}
-            <Typography>{itemInCart.quantity}</Typography>
+            <Typography>{itemInCart?.quantity || 0}</Typography>
             <Button variant="text" onClick={() => incrementQuantity(data._id)}>
               <Add />
             </Button>

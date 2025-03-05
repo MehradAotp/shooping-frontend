@@ -21,7 +21,9 @@ const Cart = () => {
     clearCart,
     incrementQuantity,
     decrementQuantity,
+    syncCart,
   } = useCart();
+  console.log("this is the cart", cart);
 
   const handlePayment = async () => {
     try {
@@ -30,7 +32,8 @@ const Cart = () => {
         variant: "success",
         autoHideDuration: 2000,
       });
-      clearCart();
+      await clearCart();
+      await syncCart();
     } catch {
       enqueueSnackbar("خطا در پرداخت! لطفاً دوباره امتحان کنید", {
         variant: "error",
@@ -52,45 +55,64 @@ const Cart = () => {
           boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1)",
         }}
       >
-        {cart.map((item) => (
-          <ListItem key={item._id} className={styles.cartItem}>
-            <ListItemText
-              sx={{
-                direction: "rtl",
-                textAlign: "right",
-                borderBottom: "1px solid #eee",
-                paddingBottom: "20px",
-              }}
-              primary={item.name}
-              secondary={`${(
-                item.price * item.quantity
-              ).toLocaleString()} تومان (تعداد: ${item.quantity})`}
-            />
-            <Box
-              display="flex"
-              alignItems="center"
-              flexDirection="row-reverse"
-              paddingRight={2}
-              gap={1}
-            >
-              <IconButton onClick={() => incrementQuantity(item._id)}>
-                <Add />
-              </IconButton>
-              <IconButton onClick={() => decrementQuantity(item._id)}>
-                <Remove />
-              </IconButton>
-              <IconButton onClick={() => removeFromCart(item._id)}>
-                <Delete />
-              </IconButton>
-            </Box>
-          </ListItem>
-        ))}
+        {cart?.items?.length === 0 ? (
+          <Typography variant="body1" sx={{ p: 2, textAlign: "center" }}>
+            سبد خرید شما خالی است
+          </Typography>
+        ) : (
+          cart?.items?.map((item) => {
+            if (!item?.shoppingId) return null;
+
+            return (
+              <ListItem key={item.shoppingId._id} className={styles.cartItem}>
+                <ListItemText
+                  sx={{
+                    direction: "rtl",
+                    textAlign: "right",
+                    borderBottom: "1px solid #eee",
+                    paddingBottom: "20px",
+                  }}
+                  primary={item.shoppingId.name}
+                  secondary={`${(
+                    item.shoppingId.price * item.quantity
+                  ).toLocaleString()} تومان (تعداد: ${item.quantity})`}
+                />
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  flexDirection="row-reverse"
+                  paddingRight={2}
+                  gap={1}
+                >
+                  <IconButton
+                    onClick={() => incrementQuantity(item.shoppingId._id)}
+                  >
+                    <Add />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => decrementQuantity(item.shoppingId._id)}
+                  >
+                    <Remove />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => removeFromCart(item.shoppingId._id)}
+                  >
+                    <Delete />
+                  </IconButton>
+                </Box>
+              </ListItem>
+            );
+          })
+        )}
       </List>
       <Typography variant="h6" className={styles.cartTotal}>
         مجموع قیمت:{" "}
-        {cart
-          .reduce((acc, item) => acc + item.price * item.quantity, 0)
-          .toLocaleString()}{" "}
+        {cart?.items
+          ?.reduce(
+            (acc, item) => acc + (item.shoppingId?.price ?? 0) * item.quantity,
+            0
+          )
+          .toLocaleString()}
         تومان
       </Typography>
 
@@ -98,7 +120,7 @@ const Cart = () => {
         variant="contained"
         color="success"
         onClick={handlePayment}
-        disabled={cart.length === 0}
+        disabled={cart?.items?.length === 0}
         sx={{ mt: 2 }}
       >
         پرداخت

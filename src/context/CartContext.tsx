@@ -1,13 +1,24 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { ShoppingOutput } from "../api/todo";
+import { createContext, useContext, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { CartItemDto, CartOutputDto, ShoppingOutput } from "../api/todo";
+import {
+  addToCart,
+  clearCart,
+  decrementCartItem,
+  getCartItems,
+  incrementCartItem,
+  removeFromCart,
+} from "../services/apiService";
 
 interface CartContextType {
-  cart: (ShoppingOutput & { quantity: number })[];
-  addToCart: (product: ShoppingOutput) => void;
-  removeFromCart: (id: string) => void;
-  clearCart: () => void;
-  incrementQuantity: (id: string) => void;
-  decrementQuantity: (id: string) => void;
+  cart: CartOutputDto;
+  addToCart: (product: ShoppingOutput) => Promise<void>;
+  removeFromCart: (id: string) => Promise<void>;
+  clearCart: () => Promise<void>;
+  syncCart: () => Promise<void>;
+  incrementQuantity: (id: string) => Promise<void>;
+  decrementQuantity: (id: string) => Promise<void>;
+  isLoading: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -15,71 +26,76 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [cart, setCart] = useState<(ShoppingOutput & { quantity: number })[]>(
-    () => {
-      const savedCart = localStorage.getItem("cart");
-      return savedCart ? JSON.parse(savedCart) : [];
-    }
-  );
-
+  const {
+    data: cart,
+    isLoading,
+    refetch,
+  } = useQuery<CartOutputDto>({
+    queryKey: ["cart"],
+    queryFn: async () => {
+      const cartItems = await getCartItems();
+      return cartItems;
+    },
+    enabled: !!localStorage.getItem("token"),
+    staleTime: 0,
+    initialData: { userId: "", items: [] },
+  });
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    refetch();
+  }, [refetch]);
 
-  const addToCart = (product: ShoppingOutput) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item._id === product._id);
-      if (existing) {
-        return prev.map((item) =>
-          item._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
+  const syncCart = async () => {
+    await refetch();
   };
-
-  const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((item) => item._id !== id));
-  };
-
-  const clearCart = () => {
-    setCart([]);
-  };
-
-  const incrementQuantity = (id: string) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item._id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
+  const handleAddToCart = async (product: ShoppingOutput) => {
+    const existingItem = cart?.items.find(
+      (item: CartItemDto) => item.shoppingId._id === product._id
     );
+
+    if (existingItem) {
+      await incrementCartItem(existingItem.shoppingId._id);
+    } else {
+      await addToCart(product._id);
+    }
+
+    await refetch();
   };
 
-  const decrementQuantity = (id: string) => {
-    setCart((prev) =>
-      prev
-        .map((item) => {
-          if (item._id === id) {
-            if (item.quantity > 1) {
-              return { ...item, quantity: item.quantity - 1 };
-            }
-          }
-          return item;
-        })
-        .filter((item) => item.quantity > 0)
-    );
+  const handleRemoveFromCart = async (id: string) => {
+    await removeFromCart(id);
+    await refetch();
+  };
+
+  const handleClearCart = async () => {
+    try {
+      await clearCart();
+      await syncCart();
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+    }
+  };
+
+  const handleIncrement = async (id: string) => {
+    await incrementCartItem(id);
+    await refetch();
+  };
+
+  const handleDecrement = async (id: string) => {
+    await decrementCartItem(id);
+    await refetch();
   };
 
   return (
     <CartContext.Provider
       value={{
-        cart,
-        addToCart,
-        removeFromCart,
-        clearCart,
-        incrementQuantity,
-        decrementQuantity,
+        cart: cart || { userId: "", items: [] },
+        addToCart: handleAddToCart,
+        removeFromCart: handleRemoveFromCart,
+        clearCart: handleClearCart,
+        incrementQuantity: handleIncrement,
+        decrementQuantity: handleDecrement,
+        isLoading,
+        syncCart: syncCart,
       }}
     >
       {children}

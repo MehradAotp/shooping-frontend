@@ -6,8 +6,11 @@ import {
   ShoppingApi,
   ShoppingOutput,
   UsersApi,
+  CartApi,
+  CartOutputDto,
 } from "./../api/todo/api";
 import axiosInstance from "./axiosInstance";
+import { getUserIdFromToken } from "./axiosInstance";
 
 const shoppingApi = new ShoppingApi(
   undefined,
@@ -24,6 +27,17 @@ const usersApi = new UsersApi(
   import.meta.env.VITE_API_BASE_URL,
   axiosInstance
 );
+const cartApi = new CartApi(
+  undefined,
+  import.meta.env.VITE_API_BASE_URL,
+  axiosInstance
+);
+
+export interface CartItem {
+  _id: string;
+  product: ShoppingOutput;
+  quantity: number;
+}
 
 export const signup = async (
   username: string,
@@ -78,4 +92,91 @@ export const getShopping = async (id: string): Promise<ShoppingOutput> => {
 export const buyShopping = async (): Promise<BuyShoppingOutput> => {
   const response = await shoppingApi.buy();
   return response.data;
+};
+
+export const addToCart = async (productId: string): Promise<CartItem> => {
+  try {
+    const userId = getUserIdFromToken();
+    if (!userId) throw new Error("کاربر لاگین نشده است");
+
+    const response = await cartApi.addToCart({
+      cartDto: {
+        userId: userId,
+        shoppingId: productId,
+      },
+    });
+    return response.data as CartItem;
+  } catch {
+    throw new Error("خطا در افزودن به سبد خرید");
+  }
+};
+
+export const incrementCartItem = async (productId: string) => {
+  const userId = getUserIdFromToken();
+  if (!userId) throw new Error("کاربر لاگین نشده است");
+
+  const response = await cartApi.incrementCartItem({
+    cartDto: {
+      userId: userId,
+      shoppingId: productId,
+    },
+  });
+  return response.data;
+};
+
+export const decrementCartItem = async (productId: string) => {
+  const userId = getUserIdFromToken();
+  if (!userId) throw new Error("کاربر لاگین نشده است");
+
+  const response = await cartApi.decrementCartItem({
+    cartDto: {
+      userId: userId,
+      shoppingId: productId,
+    },
+  });
+  return response.data;
+};
+
+export const removeFromCart = async (productId: string) => {
+  try {
+    const userId = getUserIdFromToken();
+    if (!userId) throw new Error("کاربر لاگین نشده است");
+
+    const response = await cartApi.removeFromCart({
+      cartDto: {
+        userId: userId,
+        shoppingId: productId,
+      },
+    });
+    return response.data;
+  } catch {
+    throw new Error("خطا در حذف از سبد خرید");
+  }
+};
+
+export const getCartItems = async (): Promise<CartOutputDto> => {
+  try {
+    const userId = getUserIdFromToken();
+    if (!userId) throw new Error("کاربر لاگین نشده است");
+    const response = await cartApi.getCart({ userId });
+    return response.data;
+  } catch {
+    throw new Error("خطا در دریافت سبد خرید");
+  }
+};
+
+export const clearCart = async () => {
+  try {
+    const userId = getUserIdFromToken();
+    if (!userId) throw new Error("کاربر لاگین نشده است");
+
+    const response = await cartApi.clearCart({
+      clearCartDto: {
+        userId: userId,
+      },
+    });
+    return response.data;
+  } catch {
+    throw new Error("خطا در پاک کردن سبد خرید");
+  }
 };

@@ -39,27 +39,72 @@ export interface BuyShoppingOutput {
 /**
  * 
  * @export
- * @interface CreateShopping
+ * @interface CartDto
  */
-export interface CreateShopping {
+export interface CartDto {
     /**
      * 
      * @type {string}
-     * @memberof CreateShopping
+     * @memberof CartDto
      */
-    'name': string;
+    'userId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CartDto
+     */
+    'shoppingId': string;
+}
+/**
+ * 
+ * @export
+ * @interface CartItemDto
+ */
+export interface CartItemDto {
+    /**
+     * 
+     * @type {ShoppingOutput}
+     * @memberof CartItemDto
+     */
+    'shoppingId': ShoppingOutput;
     /**
      * 
      * @type {number}
-     * @memberof CreateShopping
+     * @memberof CartItemDto
      */
-    'price': number;
+    'quantity': number;
+}
+/**
+ * 
+ * @export
+ * @interface CartOutputDto
+ */
+export interface CartOutputDto {
     /**
      * 
      * @type {string}
-     * @memberof CreateShopping
+     * @memberof CartOutputDto
      */
-    'image': string;
+    'userId': string;
+    /**
+     * 
+     * @type {Array<CartItemDto>}
+     * @memberof CartOutputDto
+     */
+    'items': Array<CartItemDto>;
+}
+/**
+ * 
+ * @export
+ * @interface ClearCartDto
+ */
+export interface ClearCartDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof ClearCartDto
+     */
+    'userId': string;
 }
 /**
  * 
@@ -167,31 +212,6 @@ export interface ShoppingOutput {
      * @memberof ShoppingOutput
      */
     'image': string;
-}
-/**
- * 
- * @export
- * @interface UpdateShopping
- */
-export interface UpdateShopping {
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateShopping
-     */
-    'name'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateShopping
-     */
-    'price'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateShopping
-     */
-    'image'?: string;
 }
 
 /**
@@ -315,22 +335,56 @@ export class AuthenticationApi extends BaseAPI {
 
 
 /**
- * ShoppingApi - axios parameter creator
+ * CartApi - axios parameter creator
  * @export
  */
-export const ShoppingApiAxiosParamCreator = function (configuration?: Configuration) {
+export const CartApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {string} id 
+         * @param {CartDto} cartDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        _delete: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('_delete', 'id', id)
-            const localVarPath = `/shopping/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        addToCart: async (cartDto: CartDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'cartDto' is not null or undefined
+            assertParamExists('addToCart', 'cartDto', cartDto)
+            const localVarPath = `/cart/add`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(cartDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {ClearCartDto} clearCartDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        clearCart: async (clearCartDto: ClearCartDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'clearCartDto' is not null or undefined
+            assertParamExists('clearCart', 'clearCartDto', clearCartDto)
+            const localVarPath = `/cart/clear`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -342,9 +396,76 @@ export const ShoppingApiAxiosParamCreator = function (configuration?: Configurat
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(clearCartDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {CartDto} cartDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        decrementCartItem: async (cartDto: CartDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'cartDto' is not null or undefined
+            assertParamExists('decrementCartItem', 'cartDto', cartDto)
+            const localVarPath = `/cart/decrement`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(cartDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} userId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCart: async (userId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'userId' is not null or undefined
+            assertParamExists('getCart', 'userId', userId)
+            const localVarPath = `/cart/{userId}`
+                .replace(`{${"userId"}}`, encodeURIComponent(String(userId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
 
 
     
@@ -357,6 +478,391 @@ export const ShoppingApiAxiosParamCreator = function (configuration?: Configurat
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {CartDto} cartDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        incrementCartItem: async (cartDto: CartDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'cartDto' is not null or undefined
+            assertParamExists('incrementCartItem', 'cartDto', cartDto)
+            const localVarPath = `/cart/increment`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(cartDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {CartDto} cartDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        removeFromCart: async (cartDto: CartDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'cartDto' is not null or undefined
+            assertParamExists('removeFromCart', 'cartDto', cartDto)
+            const localVarPath = `/cart/remove`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(cartDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * CartApi - functional programming interface
+ * @export
+ */
+export const CartApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = CartApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {CartDto} cartDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async addToCart(cartDto: CartDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addToCart(cartDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CartApi.addToCart']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {ClearCartDto} clearCartDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async clearCart(clearCartDto: ClearCartDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.clearCart(clearCartDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CartApi.clearCart']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {CartDto} cartDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async decrementCartItem(cartDto: CartDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.decrementCartItem(cartDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CartApi.decrementCartItem']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} userId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getCart(userId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CartOutputDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getCart(userId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CartApi.getCart']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {CartDto} cartDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async incrementCartItem(cartDto: CartDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.incrementCartItem(cartDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CartApi.incrementCartItem']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {CartDto} cartDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async removeFromCart(cartDto: CartDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.removeFromCart(cartDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CartApi.removeFromCart']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * CartApi - factory interface
+ * @export
+ */
+export const CartApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = CartApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {CartApiAddToCartRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addToCart(requestParameters: CartApiAddToCartRequest, options?: RawAxiosRequestConfig): AxiosPromise<object> {
+            return localVarFp.addToCart(requestParameters.cartDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {CartApiClearCartRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        clearCart(requestParameters: CartApiClearCartRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.clearCart(requestParameters.clearCartDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {CartApiDecrementCartItemRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        decrementCartItem(requestParameters: CartApiDecrementCartItemRequest, options?: RawAxiosRequestConfig): AxiosPromise<object> {
+            return localVarFp.decrementCartItem(requestParameters.cartDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {CartApiGetCartRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCart(requestParameters: CartApiGetCartRequest, options?: RawAxiosRequestConfig): AxiosPromise<CartOutputDto> {
+            return localVarFp.getCart(requestParameters.userId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {CartApiIncrementCartItemRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        incrementCartItem(requestParameters: CartApiIncrementCartItemRequest, options?: RawAxiosRequestConfig): AxiosPromise<object> {
+            return localVarFp.incrementCartItem(requestParameters.cartDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {CartApiRemoveFromCartRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        removeFromCart(requestParameters: CartApiRemoveFromCartRequest, options?: RawAxiosRequestConfig): AxiosPromise<object> {
+            return localVarFp.removeFromCart(requestParameters.cartDto, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * Request parameters for addToCart operation in CartApi.
+ * @export
+ * @interface CartApiAddToCartRequest
+ */
+export interface CartApiAddToCartRequest {
+    /**
+     * 
+     * @type {CartDto}
+     * @memberof CartApiAddToCart
+     */
+    readonly cartDto: CartDto
+}
+
+/**
+ * Request parameters for clearCart operation in CartApi.
+ * @export
+ * @interface CartApiClearCartRequest
+ */
+export interface CartApiClearCartRequest {
+    /**
+     * 
+     * @type {ClearCartDto}
+     * @memberof CartApiClearCart
+     */
+    readonly clearCartDto: ClearCartDto
+}
+
+/**
+ * Request parameters for decrementCartItem operation in CartApi.
+ * @export
+ * @interface CartApiDecrementCartItemRequest
+ */
+export interface CartApiDecrementCartItemRequest {
+    /**
+     * 
+     * @type {CartDto}
+     * @memberof CartApiDecrementCartItem
+     */
+    readonly cartDto: CartDto
+}
+
+/**
+ * Request parameters for getCart operation in CartApi.
+ * @export
+ * @interface CartApiGetCartRequest
+ */
+export interface CartApiGetCartRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof CartApiGetCart
+     */
+    readonly userId: string
+}
+
+/**
+ * Request parameters for incrementCartItem operation in CartApi.
+ * @export
+ * @interface CartApiIncrementCartItemRequest
+ */
+export interface CartApiIncrementCartItemRequest {
+    /**
+     * 
+     * @type {CartDto}
+     * @memberof CartApiIncrementCartItem
+     */
+    readonly cartDto: CartDto
+}
+
+/**
+ * Request parameters for removeFromCart operation in CartApi.
+ * @export
+ * @interface CartApiRemoveFromCartRequest
+ */
+export interface CartApiRemoveFromCartRequest {
+    /**
+     * 
+     * @type {CartDto}
+     * @memberof CartApiRemoveFromCart
+     */
+    readonly cartDto: CartDto
+}
+
+/**
+ * CartApi - object-oriented interface
+ * @export
+ * @class CartApi
+ * @extends {BaseAPI}
+ */
+export class CartApi extends BaseAPI {
+    /**
+     * 
+     * @param {CartApiAddToCartRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CartApi
+     */
+    public addToCart(requestParameters: CartApiAddToCartRequest, options?: RawAxiosRequestConfig) {
+        return CartApiFp(this.configuration).addToCart(requestParameters.cartDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {CartApiClearCartRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CartApi
+     */
+    public clearCart(requestParameters: CartApiClearCartRequest, options?: RawAxiosRequestConfig) {
+        return CartApiFp(this.configuration).clearCart(requestParameters.clearCartDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {CartApiDecrementCartItemRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CartApi
+     */
+    public decrementCartItem(requestParameters: CartApiDecrementCartItemRequest, options?: RawAxiosRequestConfig) {
+        return CartApiFp(this.configuration).decrementCartItem(requestParameters.cartDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {CartApiGetCartRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CartApi
+     */
+    public getCart(requestParameters: CartApiGetCartRequest, options?: RawAxiosRequestConfig) {
+        return CartApiFp(this.configuration).getCart(requestParameters.userId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {CartApiIncrementCartItemRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CartApi
+     */
+    public incrementCartItem(requestParameters: CartApiIncrementCartItemRequest, options?: RawAxiosRequestConfig) {
+        return CartApiFp(this.configuration).incrementCartItem(requestParameters.cartDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {CartApiRemoveFromCartRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CartApi
+     */
+    public removeFromCart(requestParameters: CartApiRemoveFromCartRequest, options?: RawAxiosRequestConfig) {
+        return CartApiFp(this.configuration).removeFromCart(requestParameters.cartDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ShoppingApi - axios parameter creator
+ * @export
+ */
+export const ShoppingApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
         /**
          * 
          * @param {*} [options] Override http request option.
@@ -384,45 +890,6 @@ export const ShoppingApiAxiosParamCreator = function (configuration?: Configurat
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {CreateShopping} createShopping 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        create: async (createShopping: CreateShopping, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'createShopping' is not null or undefined
-            assertParamExists('create', 'createShopping', createShopping)
-            const localVarPath = `/shopping`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(createShopping, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -499,49 +966,6 @@ export const ShoppingApiAxiosParamCreator = function (configuration?: Configurat
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * 
-         * @param {string} id 
-         * @param {UpdateShopping} updateShopping 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        update: async (id: string, updateShopping: UpdateShopping, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('update', 'id', id)
-            // verify required parameter 'updateShopping' is not null or undefined
-            assertParamExists('update', 'updateShopping', updateShopping)
-            const localVarPath = `/shopping/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(updateShopping, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -554,18 +978,6 @@ export const ShoppingApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async _delete(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(id, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ShoppingApi._delete']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -573,18 +985,6 @@ export const ShoppingApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.buy(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ShoppingApi.buy']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {CreateShopping} createShopping 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async create(createShopping: CreateShopping, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShoppingOutput>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.create(createShopping, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ShoppingApi.create']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -610,19 +1010,6 @@ export const ShoppingApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['ShoppingApi.findOne']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
-        /**
-         * 
-         * @param {string} id 
-         * @param {UpdateShopping} updateShopping 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async update(id: string, updateShopping: UpdateShopping, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShoppingOutput>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.update(id, updateShopping, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ShoppingApi.update']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
     }
 };
 
@@ -635,29 +1022,11 @@ export const ShoppingApiFactory = function (configuration?: Configuration, baseP
     return {
         /**
          * 
-         * @param {ShoppingApiDeleteRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        _delete(requestParameters: ShoppingApiDeleteRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp._delete(requestParameters.id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         buy(options?: RawAxiosRequestConfig): AxiosPromise<BuyShoppingOutput> {
             return localVarFp.buy(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {ShoppingApiCreateRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        create(requestParameters: ShoppingApiCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<ShoppingOutput> {
-            return localVarFp.create(requestParameters.createShopping, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -676,45 +1045,8 @@ export const ShoppingApiFactory = function (configuration?: Configuration, baseP
         findOne(requestParameters: ShoppingApiFindOneRequest, options?: RawAxiosRequestConfig): AxiosPromise<ShoppingOutput> {
             return localVarFp.findOne(requestParameters.id, options).then((request) => request(axios, basePath));
         },
-        /**
-         * 
-         * @param {ShoppingApiUpdateRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        update(requestParameters: ShoppingApiUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<ShoppingOutput> {
-            return localVarFp.update(requestParameters.id, requestParameters.updateShopping, options).then((request) => request(axios, basePath));
-        },
     };
 };
-
-/**
- * Request parameters for _delete operation in ShoppingApi.
- * @export
- * @interface ShoppingApiDeleteRequest
- */
-export interface ShoppingApiDeleteRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ShoppingApiDelete
-     */
-    readonly id: string
-}
-
-/**
- * Request parameters for create operation in ShoppingApi.
- * @export
- * @interface ShoppingApiCreateRequest
- */
-export interface ShoppingApiCreateRequest {
-    /**
-     * 
-     * @type {CreateShopping}
-     * @memberof ShoppingApiCreate
-     */
-    readonly createShopping: CreateShopping
-}
 
 /**
  * Request parameters for findOne operation in ShoppingApi.
@@ -731,27 +1063,6 @@ export interface ShoppingApiFindOneRequest {
 }
 
 /**
- * Request parameters for update operation in ShoppingApi.
- * @export
- * @interface ShoppingApiUpdateRequest
- */
-export interface ShoppingApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ShoppingApiUpdate
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {UpdateShopping}
-     * @memberof ShoppingApiUpdate
-     */
-    readonly updateShopping: UpdateShopping
-}
-
-/**
  * ShoppingApi - object-oriented interface
  * @export
  * @class ShoppingApi
@@ -760,34 +1071,12 @@ export interface ShoppingApiUpdateRequest {
 export class ShoppingApi extends BaseAPI {
     /**
      * 
-     * @param {ShoppingApiDeleteRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ShoppingApi
-     */
-    public _delete(requestParameters: ShoppingApiDeleteRequest, options?: RawAxiosRequestConfig) {
-        return ShoppingApiFp(this.configuration)._delete(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ShoppingApi
      */
     public buy(options?: RawAxiosRequestConfig) {
         return ShoppingApiFp(this.configuration).buy(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {ShoppingApiCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ShoppingApi
-     */
-    public create(requestParameters: ShoppingApiCreateRequest, options?: RawAxiosRequestConfig) {
-        return ShoppingApiFp(this.configuration).create(requestParameters.createShopping, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -809,17 +1098,6 @@ export class ShoppingApi extends BaseAPI {
      */
     public findOne(requestParameters: ShoppingApiFindOneRequest, options?: RawAxiosRequestConfig) {
         return ShoppingApiFp(this.configuration).findOne(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {ShoppingApiUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ShoppingApi
-     */
-    public update(requestParameters: ShoppingApiUpdateRequest, options?: RawAxiosRequestConfig) {
-        return ShoppingApiFp(this.configuration).update(requestParameters.id, requestParameters.updateShopping, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
