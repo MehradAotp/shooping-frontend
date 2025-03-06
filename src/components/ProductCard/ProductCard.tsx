@@ -72,8 +72,10 @@ export const ProductCard = ({ data, isLoading = false }: ProductCardProps) => {
     <Card sx={{ maxWidth: 300 }}>
       <CardMedia component="img" image={image} alt={name} />
       <CardContent>
-        <Typography variant="h6">{name}</Typography>
-        <Typography sx={{ mb: 3 }} variant="body1">
+        <Typography variant="h6" sx={{ direction: "rtl" }}>
+          {name}
+        </Typography>
+        <Typography sx={{ mb: 3, direction: "rtl" }} variant="body1">
           {price.toLocaleString()} تومان
         </Typography>
 
