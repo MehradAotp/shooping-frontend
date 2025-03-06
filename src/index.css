@@ -1,13 +1,24 @@
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/public/fonts/Vazirmatn[wght].woff2") format("woff2"),
+    url("/public/fonts/Vazirmatn-Black.ttf") format("ttf");
+  font-weight: 100 800;
+  font-style: normal;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   scrollbar-width: thin;
   scrollbar-color: #888888 #f1f1f1;
+  font-family: "Vazirmatn";
+  scrollbar-width: thin;
+  scrollbar-color: #3f0f9f #f1f1f1;
 }
+
 body {
   margin: 0;
-  font-family: "Poppins", sans-serif;
   background-color: #f4f4f4;
   color: #333;
   -webkit-font-smoothing: antialiased;
@@ -39,9 +50,4 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #3f0f9f #f1f1f1;
 }

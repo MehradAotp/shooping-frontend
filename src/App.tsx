@@ -6,6 +6,7 @@ import ProductsPage from "./pages/products/Products";
 import LoginPage from "./pages/login/loginPage";
 import SignupPage from "./pages/signup/signupPage";
 import { SnackbarProvider } from "notistack";
+import "./index.css";
 
 function App() {
   return (
