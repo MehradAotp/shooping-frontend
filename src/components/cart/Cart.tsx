@@ -23,7 +23,6 @@ const Cart = () => {
     decrementQuantity,
     syncCart,
   } = useCart();
-  console.log("this is the cart", cart);
 
   const handlePayment = async () => {
     try {

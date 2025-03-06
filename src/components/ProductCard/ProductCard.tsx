@@ -36,7 +36,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
         autoHideDuration: 2000,
       });
     } catch {
-      enqueueSnackbar("خطا در افزودن به سبد", { variant: "error" });
+      enqueueSnackbar("لطفا وارد شوید", { variant: "error" });
     }
   };
   const handleRemoveFromCart = () => {
@@ -50,8 +50,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
   const itemInCart = cart?.items?.find(
     (item) => item.shoppingId?._id === data._id
   );
-  console.log("this is cart", cart);
-  console.log("this is itemInCart", itemInCart);
+
   return (
     <Card sx={{ maxWidth: 300 }}>
       <CardMedia component="img" image={image} alt={name} />
