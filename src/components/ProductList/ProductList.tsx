@@ -16,7 +16,17 @@ const ProductList = () => {
   });
 
   if (isLoading) {
-    return <div className={styles.loading}>در حال بارگیری محصولات...</div>;
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Grid2 container spacing={3} className={styles.productList}>
+          {[...Array(6)].map((_, index) => (
+            <Grid2 key={index} size={{ xs: 12, sm: 6, md: 4 }}>
+              <ProductCard isLoading />
+            </Grid2>
+          ))}
+        </Grid2>
+      </Container>
+    );
   }
 
   if (isError) {

@@ -7,6 +7,7 @@ import {
   Button,
   Box,
   IconButton,
+  Skeleton,
 } from "@mui/material";
 import styles from "./ProductCard.module.css";
 import { ShoppingOutput } from "../../api/todo";
@@ -14,11 +15,11 @@ import { useSnackbar } from "notistack";
 import { Add, Delete, Remove } from "@mui/icons-material";
 
 interface ProductCardProps {
-  data: ShoppingOutput;
+  data?: ShoppingOutput;
+  isLoading?: boolean;
 }
 
-const ProductCard = ({ data }: ProductCardProps) => {
-  const { name, price, image } = data;
+export const ProductCard = ({ data, isLoading = false }: ProductCardProps) => {
   const {
     cart,
     addToCart,
@@ -27,6 +28,22 @@ const ProductCard = ({ data }: ProductCardProps) => {
     removeFromCart,
   } = useCart();
   const { enqueueSnackbar } = useSnackbar();
+  if (isLoading || !data) {
+    return (
+      <Card sx={{ maxWidth: 300 }}>
+        <Skeleton variant="rectangular" width={300} height={200} />
+        <CardContent>
+          <Skeleton variant="text" width="60%" height={32} />
+          <Skeleton variant="text" width="40%" height={24} />
+          <Box mt={2}>
+            <Skeleton variant="rectangular" width="100%" height={36} />
+          </Box>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const { name, price, image } = data;
   const handleAddToCart = async () => {
     try {
       await addToCart(data);
