@@ -17,14 +17,6 @@
   flex-direction: column-reverse;
 }
 
-.cartItem {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: space-between;
-  width: 100%;
-  padding: 16px 0;
-}
-
 .itemText span {
   text-align: right !important;
   display: block;

@@ -75,7 +75,7 @@ export const ProductCard = ({ data, isLoading = false }: ProductCardProps) => {
         <Typography variant="h6" sx={{ direction: "rtl" }}>
           {name}
         </Typography>
-        <Typography sx={{ mb: 3, direction: "rtl" }} variant="body1">
+        <Typography sx={{ mb: 3, direction: "rtl" }} variant="subtitle2">
           {price.toLocaleString()} تومان
         </Typography>
 
